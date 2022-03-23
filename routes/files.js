@@ -9,7 +9,7 @@ let storage = multer.diskStorage({
   filename: (req, file, cb) => {
     const uniqueName = `${Date.now()}-${Math.round(
       Math.random() * 1e9
-    )}${path.extname(file.originalname)}`;
+    )}-${file.originalname.split('.').pop()}`;
     cb(null, uniqueName);
   },
 });
@@ -31,8 +31,9 @@ router.post('/', (req, res) => {
       size: req.file.size,
     });
     const response = await file.save();
+    const extension = response.filename.split('-').pop();
     res.status(201).json({
-      file: `${process.env.APP_BASE_URL}/files/download/${response.uuid}`,
+      file: `${process.env.APP_BASE_URL}/files/download/${response.uuid}/${extension}`,
     });
   });
 });
