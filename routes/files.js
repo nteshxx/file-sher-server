@@ -18,10 +18,11 @@ let upload = multer({ storage, limits: { fileSize: 1000000 * 100 } }).single(
   'myfile'
 ); //100mb
 
+// upload and generate a download link
 router.post('/', (req, res) => {
   upload(req, res, async (err) => {
     if (err) {
-      return res.status(500).send({ error: err.message });
+      return res.status(400).json({ error: err.message });
     }
     const file = new File({
       filename: req.file.filename,
@@ -30,12 +31,13 @@ router.post('/', (req, res) => {
       size: req.file.size,
     });
     const response = await file.save();
-    res.json({
+    res.status(201).json({
       file: `${process.env.APP_BASE_URL}/files/download/${response.uuid}`,
     });
   });
 });
 
+// sending download link to an email
 router.post('/send', async (req, res) => {
   const { uuid, emailTo, emailFrom, expiresIn } = req.body;
   if (!uuid || !emailTo || !emailFrom) {
@@ -67,7 +69,7 @@ router.post('/send', async (req, res) => {
       }),
     })
       .then(() => {
-        return res.json({ success: true });
+        return res.status(201).json({ success: true });
       })
       .catch((err) => {
         return res.status(500).json({ error: 'Error in email sending.' });
