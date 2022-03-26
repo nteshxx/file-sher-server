@@ -39,6 +39,9 @@ app.use(express.json());
 app.set('views', path.join(__dirname, '/views'));
 app.set('view engine', 'ejs');
 
+app.get('/', (req, res) => {
+  res.status(200).json('Server is Live');
+});
 // Routes
 app.use('/api/files', require('./routes/files'));
 // app.use('/files', require('./routes/show'));
@@ -46,7 +49,7 @@ app.use('/files/download', require('./routes/download'));
 
 // send back a 404 error for any unknown api request
 app.use((req, res, next) => {
-  next(new ApiError(httpStatus.NOT_FOUND, 'Not found We are Monitoring It ☠️'));
+  next(new ApiError(httpStatus.NOT_FOUND, 'Not found'));
 });
 
 // convert error to ApiError, if needed
