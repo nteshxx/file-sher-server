@@ -10,7 +10,9 @@ router.get('/:uuid/:ext', async (req, res) => {
   }
   const response = await file.save();
   const filePath = `${__dirname}/../${file.path}`;
-  res.download(filePath);
+  res.download(filePath, `file-sher-${req.params.uuid}.${req.params.ext}`, () => {
+    console.log("file downloaded");
+  });
 });
 
 module.exports = router;
